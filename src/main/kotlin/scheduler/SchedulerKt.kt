@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Serializer
 import kotlinx.serialization.UseSerializers
 import net.minecraft.block.Block
-import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.NbtCompound
 import net.minecraft.server.world.ServerWorld
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.World
@@ -29,7 +29,7 @@ public object BlockScheduler {
         block: T, world: World,
         scheduleId: Int = 0,
         blockPos: BlockPos = BlockPos.ORIGIN,
-        additionalData: CompoundTag = CompoundTag()
+        additionalData: NbtCompound = NbtCompound()
     ): CancellationToken
             where T : Scheduleable, T : Block = schedule(
         block, world, scheduleId, blockPos, additionalData, repetition = Repetition.Once(world.time + ticksUntilEnd)
@@ -48,7 +48,7 @@ public object BlockScheduler {
         block: T, world: World,
         scheduleId: Int = 0,
         blockPos: BlockPos = BlockPos.ORIGIN,
-        additionalData: CompoundTag = CompoundTag()
+        additionalData: NbtCompound = NbtCompound()
     ): CancellationToken
             where T : Scheduleable, T : Block = schedule(
         block, world, scheduleId, blockPos, additionalData,
@@ -69,7 +69,7 @@ public object BlockScheduler {
         block: T, world: World,
         scheduleId: Int = 0,
         blockPos: BlockPos = BlockPos.ORIGIN,
-        additionalData: CompoundTag = CompoundTag()
+        additionalData: NbtCompound = NbtCompound()
     ): CancellationToken
             where T : Scheduleable, T : Block = schedule(
         block, world, scheduleId, blockPos, additionalData,

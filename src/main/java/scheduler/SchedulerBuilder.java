@@ -2,7 +2,7 @@ package scheduler;
 
 
 import net.minecraft.block.Block;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -12,7 +12,7 @@ public class SchedulerBuilder<T extends Block & Scheduleable> {
     private World world;
     private int scheduleId = 0;
     private BlockPos blockPos = BlockPos.ORIGIN;
-    private CompoundTag additionalData = new CompoundTag();
+    private NbtCompound additionalData = new NbtCompound();
 
     SchedulerBuilder(T scheduleable, World world) {
         this.scheduleable = scheduleable;
@@ -36,9 +36,9 @@ public class SchedulerBuilder<T extends Block & Scheduleable> {
     }
 
     /**
-     * Pass a CompoundTag to onScheduleEnd.
+     * Pass a NbtCompound to onScheduleEnd.
      */
-    public SchedulerBuilder additionalData(CompoundTag tag) {
+    public SchedulerBuilder additionalData(NbtCompound tag) {
         this.additionalData = tag;
         return this;
     }

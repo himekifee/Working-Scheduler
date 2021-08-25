@@ -5,7 +5,7 @@ import net.minecraft.world.PersistentStateManager
 import org.apache.logging.log4j.LogManager
 
 internal fun <T : PersistentState> PersistentStateManager.getOrCreate(id: String, creator: () -> T): T =
-    getOrCreate(creator, id)
+    getOrCreate(id, creator)
 
 private val Logger = LogManager.getLogger("Working Ticker")
 

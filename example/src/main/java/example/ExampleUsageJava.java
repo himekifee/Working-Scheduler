@@ -2,7 +2,7 @@ package example;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
@@ -17,7 +17,7 @@ import static example.ExampleUsageKt.SchedulingPlayerIdKey;
 public class ExampleUsageJava extends AbstractExampleBlock {
     @Override
     public ActionResult onUse(BlockState blockState_1, World world, BlockPos pos, PlayerEntity player, Hand hand_1, BlockHitResult blockHitResult_1) {
-        CompoundTag scheduleData = new CompoundTag();
+        NbtCompound scheduleData = new NbtCompound();
         scheduleData.putUuid(SchedulingPlayerIdKey, player.getUuid());
 
         Scheduler.Builder(this, world)

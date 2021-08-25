@@ -1,4 +1,4 @@
-@file:UseSerializers(ForIdentifier::class, ForBlockPos::class, ForUuid::class, ForCompoundTag::class)
+@file:UseSerializers(ForIdentifier::class, ForBlockPos::class, ForUuid::class, ForNbtCompound::class)
 
 package scheduler.internal
 
@@ -6,17 +6,18 @@ import drawer.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.UseSerializers
-import kotlinx.serialization.list
+import kotlinx.serialization.builtins.ListSerializer
 import net.minecraft.block.AbstractBlock
 import net.minecraft.block.Block
 import net.minecraft.block.Material
-import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.NbtCompound
 import net.minecraft.util.Identifier
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.registry.Registry
 import net.minecraft.world.PersistentState
 import net.minecraft.world.World
 import scheduler.Scheduleable
+import scheduler.Scheduler
 import java.util.*
 import kotlin.Comparator
 
@@ -53,7 +54,7 @@ internal sealed class Repetition {
 internal data class ScheduleContext(
     val blockPos: BlockPos = BlockPos.ORIGIN, val scheduleId: Int = 0,
     val blockId: Identifier = Identifier("minecraft:air"),
-    val additionalData: CompoundTag = CompoundTag()
+    val additionalData: NbtCompound = NbtCompound()
 )
 
 
@@ -72,14 +73,14 @@ internal fun getScheduleableFromRegistry(scheduleableBlockId: Identifier): Sched
     return block
 }
 
-internal class TickerState : PersistentState(SchedulerId) {
+internal class TickerState : PersistentState() {
 
 
     private val tickers =
         PriorityQueue<Schedule>(Comparator { a, b -> (a.repetition.nextTickTime - b.repetition.nextTickTime).toInt() })
 
-    override fun toTag(tag: CompoundTag): CompoundTag = tag
-        .also { Schedule.serializer().list.put(tickers.toList(), it) }
+    override fun writeNbt(nbtCompound: NbtCompound): NbtCompound = nbtCompound
+        .also{ ListSerializer(Schedule.serializer()).put(tickers.toList(), it) }
 
     fun add(ticker: Schedule) {
         tickers.add(ticker)
@@ -90,15 +91,6 @@ internal class TickerState : PersistentState(SchedulerId) {
     fun removeClosestToEnd(): Schedule? = tickers.poll()
     fun cancel(cancellationUUID: UUID): Boolean = tickers.removeIf { it.cancellationUUID == cancellationUUID }
 
-
-    override fun fromTag(tag: CompoundTag) = Schedule.serializer().list.getFrom(tag)
-        .let {
-            for (storedTicker in it) {
-                val registryScheduleable = getScheduleableFromRegistry(storedTicker.context.blockId)
-                    ?: continue
-                tickers.add(storedTicker.apply { scheduleable = registryScheduleable })
-            }
-        }
 
 }
 

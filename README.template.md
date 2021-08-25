@@ -45,7 +45,7 @@ Generally this should be the same block will execute the schedule, but it can be
 ```java
 public class ExampleScheduleableBlock extends Block implements Scheduleable {
     @Override
-    public void onScheduleEnd(World world, BlockPos pos, int scheduleId, CompoundTag additionalData) {
+    public void onScheduleEnd(World world, BlockPos pos, int scheduleId, NbtCompound additionalData) {
         System.out.println("X amount of ticks have passed!");
     }
 }
@@ -58,7 +58,7 @@ To schedule an action we have separate idiomatic Java and Kotlin apis.
 
 ```java
 public class ExampleScheduleableBlock extends Block implements Scheduleable {
-    public void onScheduleEnd(World world, BlockPos pos, int scheduleId, CompoundTag additionalData) {/*...*/}
+    public void onScheduleEnd(World world, BlockPos pos, int scheduleId, NbtCompound additionalData) {/*...*/}
 
     @Override
     public boolean activate(BlockState blockState, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hitResult) {
@@ -82,7 +82,7 @@ public class ExampleScheduleableBlock extends Block implements Scheduleable {
 
 ```kotlin
 class ExampleScheduleableBlock(settings: Block.Settings) : Block(settings), Scheduleable {
-    override fun onScheduleEnd(world: World, pos: BlockPos, scheduleId: Int, additionalData: CompoundTag) {/*...*/ }
+    override fun onScheduleEnd(world: World, pos: BlockPos, scheduleId: Int, additionalData: NbtCompound) {/*...*/ }
 
     override fun activate(blockState: BlockState, world: World, pos: BlockPos, player: PlayerEntity, hand: Hand, hitResult: BlockHitResult): Boolean {
         // Schedule the print statement action to occur after 30 ticks
@@ -112,7 +112,7 @@ Provide the data while scheduling:
 ```java
 public boolean activate(BlockState blockState, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hitResult) {
     if (player == null) return false;
-    CompoundTag scheduleData = new CompoundTag();
+    NbtCompound scheduleData = new NbtCompound();
     scheduleData.putUuid("player", player.getUuid());
 
     Scheduler.Builder(this, world)
@@ -144,7 +144,7 @@ override fun activate(
         hand: Hand?,
         hitResult: BlockHitResult?
     ): Boolean {
-    val scheduleData = CompoundTag().apply { putUuid("player", player?.uuid ?: UUID(0, 0)) }
+    val scheduleData = NbtCompound().apply { putUuid("player", player?.uuid ?: UUID(0, 0)) }
 
     BlockScheduler.schedule(
         ticksUntilEnd = 100,
@@ -174,7 +174,7 @@ And then use the data when the schedule ends:
 ```java
 public class ExampleScheduleableBlock extends Block implements Scheduleable {
     @Override
-    public void onScheduleEnd(World world, BlockPos pos, int scheduleId, CompoundTag additionalData) {
+    public void onScheduleEnd(World world, BlockPos pos, int scheduleId, NbtCompound additionalData) {
         // Note: you should validate that the player exists and the additionalData was not tampered with.
         // No validation is done for the sake of simplicity.
         PlayerEntity player = world.getPlayerByUuid(additionalData.getUuid("player"));
@@ -192,7 +192,7 @@ Notice how we use the `scheduleId` to differentiate between different schedule c
 Whenever you call a schedule, you will receive a `CancellationToken` instance. Simply call `cancel` on the same `world` to cancel:
 ```java
 public class ExampleScheduleableBlock extends Block implements Scheduleable {
-    public void onScheduleEnd(World world, BlockPos pos, int scheduleId, CompoundTag additionalData) {/*...*/}
+    public void onScheduleEnd(World world, BlockPos pos, int scheduleId, NbtCompound additionalData) {/*...*/}
 
     CancellationToken cancellationToken;
 

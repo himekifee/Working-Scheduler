@@ -9,7 +9,7 @@ import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.BlockItem
 import net.minecraft.item.Item
 import net.minecraft.item.ItemGroup
-import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.NbtCompound
 import net.minecraft.text.LiteralText
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Hand
@@ -49,7 +49,7 @@ fun init() {
 const val SchedulingPlayerIdKey = "player"
 
 abstract class AbstractExampleBlock : Block(FabricBlockSettings.of(Material.STONE).build()), Scheduleable {
-    override fun onScheduleEnd(world: World, pos: BlockPos, scheduleId: Int, additionalData: CompoundTag) {
+    override fun onScheduleEnd(world: World, pos: BlockPos, scheduleId: Int, additionalData: NbtCompound) {
         val player = getSchedulingPlayer(additionalData, world) ?: return
         val messageToSend = when (scheduleId) {
             ScheduleIds.Client.ScheduleExample -> "Schedule ended on client"
@@ -72,7 +72,7 @@ abstract class AbstractExampleBlock : Block(FabricBlockSettings.of(Material.STON
 
     }
 
-    private fun getSchedulingPlayer(additionalData: CompoundTag, world: World): PlayerEntity? {
+    private fun getSchedulingPlayer(additionalData: NbtCompound, world: World): PlayerEntity? {
         val playerId = additionalData.getUuid(SchedulingPlayerIdKey)
         if (playerId == UUID(0, 0)) {
             println("Warning: the player information was corrupted.")
@@ -124,7 +124,7 @@ object ExampleBlock : AbstractExampleBlock() {
         hand: Hand?,
         hitResult: BlockHitResult?
     ): ActionResult {
-        val scheduleData = CompoundTag().apply {
+        val scheduleData = NbtCompound().apply {
             putUuid(SchedulingPlayerIdKey, player?.uuid ?: UUID(0, 0))
         }
         BlockScheduler.schedule(

@@ -3,7 +3,7 @@ package example;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
@@ -14,7 +14,7 @@ import scheduler.Scheduleable;
 
 public class ExampleScheduleableBlock extends Block implements Scheduleable {
     @Override
-    public void onScheduleEnd(World world, BlockPos pos, int scheduleId, CompoundTag additionalData) {
+    public void onScheduleEnd(World world, BlockPos pos, int scheduleId, NbtCompound additionalData) {
         // Note: you should validate that the player exists and the additionalData was not tampered with.
         // No validation is done for the sake of simplicity.
         PlayerEntity player = world.getPlayerByUuid(additionalData.getUuid("player"));
